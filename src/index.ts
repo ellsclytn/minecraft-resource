@@ -22,7 +22,7 @@ const getItemCount = (itemName: string, multiple: number = 1, items = {}) => {
 const buildItemCount = (itemName: string, multiple: number) => {
   Object.entries(getItemCount(itemName, multiple))
     .sort(([a], [b]) => (a < b ? -1 : 1))
-    .map(([itemName, count]: Item) => console.log(`${sentenceCase(itemName)}: ${count}`))
+    .map(([itemName, count]: Item) => console.log(`${sentenceCase(itemName)}: ${Math.ceil(count)}`))
 }
 
 const argv = yargs
