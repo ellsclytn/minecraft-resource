@@ -16,4 +16,6 @@ const getItemCount = (itemName: string, multiple: number = 1, items = {}) => {
   return items
 }
 
-console.log(getItemCount('ultimateEnergyCube', 2))
+Object.entries(getItemCount('ultimateEnergyCube', 2))
+  .sort(([a], [b]) => (a < b ? -1 : 1))
+  .map(([itemName, count]) => console.log(`${itemName}: ${count}`))
