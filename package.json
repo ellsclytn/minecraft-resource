@@ -8,7 +8,9 @@
   },
   "author": "Ellis Clayton",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "change-case": "^3.0.2"
+  },
   "devDependencies": {
     "@types/node": "^9.6.6",
     "tslint": "^5.9.1",
