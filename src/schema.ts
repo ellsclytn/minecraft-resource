@@ -191,7 +191,7 @@ export default {
     'oxygenBubbleDistributor': 1
   },
   'stick': {
-    'wood': 0.25
+    'woodPlank': 2 / 4
   },
   'stoneButton': {
     'stone': 1
