@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "yarn run tsc src/index.ts --outDir dist/",
+    "build": "tsc",
     "start": "node dist/index"
   },
   "author": "Ellis Clayton",
