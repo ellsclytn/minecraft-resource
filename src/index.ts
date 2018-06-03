@@ -20,9 +20,19 @@ const getItemCount = (itemName: string, multiple: number = 1, items = {}) => {
 }
 
 const buildItemCount = (itemName: string, multiple: number) => {
-  Object.entries(getItemCount(itemName, multiple))
+  return Object.entries(getItemCount(itemName, multiple))
     .sort(([a], [b]) => (a < b ? -1 : 1))
-    .map(([itemName, count]: Item) => console.log(`${sentenceCase(itemName)}: ${Math.ceil(count)}`))
+    .map(([name, count]: Item) => {
+      const minimum = Math.ceil(count)
+      const stacks = Math.floor(minimum / 64)
+      const singles = minimum % 64
+
+      return {
+        name: sentenceCase(name),
+        stacks,
+        singles
+      }
+    })
 }
 
 const argv = yargs
@@ -35,4 +45,4 @@ const argv = yargs
   })
   .argv
 
-buildItemCount(argv._[0], argv.number)
+console.table(buildItemCount(argv._[0], argv.number))
