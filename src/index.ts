@@ -5,14 +5,32 @@ import schema from './schema'
 
 type Item = [string, number]
 
-const getItemCount = (itemName: string, multiple: number = 1, items = {}) => {
+const items = {}
+const remainders = {}
+
+const getItemCount = (itemName: string, quantity: number = 1) => {
+  const schemaItem = schema[itemName]
+  const requiredQuantity: number = quantity - (remainders[itemName] || 0)
+
+  if (requiredQuantity <= 0) {
+    remainders[itemName] = Math.abs(requiredQuantity)
+
+    return items
+  }
+
+  const productionFactor: number = (schemaItem && schemaItem.produces) || 1
+  const minimumMultiple = Math.ceil(requiredQuantity / productionFactor)
+  const multiple = minimumMultiple * productionFactor
+  const remainder = multiple - requiredQuantity
+
+  remainders[itemName] = (remainders[itemName] || 0) + remainder
   items[itemName] = (items[itemName] || 0) + multiple
 
-  if (schema[itemName]) {
+  if (schemaItem) {
     Object
-      .entries(schema[itemName])
+      .entries(schemaItem.recipe)
       .forEach(([item, qty]: Item) => {
-        getItemCount(item, qty * multiple, items)
+        getItemCount(item, qty * minimumMultiple)
       })
   }
 
@@ -20,19 +38,7 @@ const getItemCount = (itemName: string, multiple: number = 1, items = {}) => {
 }
 
 const buildItemCount = (itemName: string, multiple: number) => {
-  return Object.entries(getItemCount(itemName, multiple))
-    .sort(([a], [b]) => (a < b ? -1 : 1))
-    .map(([name, count]: Item) => {
-      const minimum = Math.ceil(count)
-      const stacks = Math.floor(minimum / 64)
-      const singles = minimum % 64
-
-      return {
-        name: sentenceCase(name),
-        stacks,
-        singles
-      }
-    })
+  getItemCount(itemName, multiple)
 }
 
 const argv = yargs
@@ -45,4 +51,19 @@ const argv = yargs
   })
   .argv
 
-console.table(buildItemCount(argv._[0], argv.number))
+buildItemCount(argv._[0], argv.number)
+
+console.table(Object.entries(items)
+  .sort(([a], [b]) => (a < b ? -1 : 1))
+  .map(([name, count]: Item) => {
+    const minimum = Math.ceil(count)
+    const stacks = Math.floor(minimum / 64)
+    const singles = minimum % 64
+
+    return {
+      name: sentenceCase(name),
+      stacks,
+      singles,
+      leftovers: remainders[name]
+    }
+  }))
